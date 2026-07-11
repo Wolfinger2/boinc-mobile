@@ -66,8 +66,13 @@ class BoincRpcClient {
 
   Future<String> _request(String body) async {
     final socket = _socket;
-    if (socket == null) throw BoincRpcException('Nicht verbunden.');
-    if (_reply != null) throw BoincRpcException('Vorherige Anfrage läuft noch.');
+    if (socket == null) {
+      throw BoincRpcException('Nicht verbunden.');
+    }
+
+    if (_reply != null) {
+      throw BoincRpcException('Vorherige Anfrage läuft noch.');
+    }
 
     _reply = Completer<String>();
     final packet = '<boinc_gui_rpc_request>$body</boinc_gui_rpc_request>\x03';
@@ -92,7 +97,8 @@ class BoincRpcClient {
     }
 
     final nonce = nonceNodes.first.innerText;
-    final digest = md5.convert(utf8.encode('$nonce${host.password}')).toString();
+    final digest =
+        md5.convert(utf8.encode('$nonce${host.password}')).toString();
     final second = XmlDocument.parse(
       await _request('<auth2><nonce_hash>$digest</nonce_hash></auth2>'),
     );
@@ -111,7 +117,8 @@ class BoincRpcClient {
     }
 
     return document.findAllElements('result').map((result) {
-      final schedulerState = int.tryParse(_text(result, 'scheduler_state')) ?? 0;
+      final schedulerState =
+          int.tryParse(_text(result, 'scheduler_state')) ?? 0;
       final activeTask = result.findElements('active_task').firstOrNull;
       final fraction = activeTask == null
           ? 0.0
@@ -123,7 +130,8 @@ class BoincRpcClient {
       return BoincTask(
         name: _text(result, 'name'),
         project: projects[projectUrl] ?? projectUrl,
-        appName: _text(result, 'plan_class', fallback: _text(result, 'wu_name')),
+        appName:
+            _text(result, 'plan_class', fallback: _text(result, 'wu_name')),
         progress: fraction.clamp(0.0, 1.0),
         active: schedulerState == 2,
         suspended: suspended,

@@ -23,7 +23,8 @@ class _HostDetailScreenState extends State<HostDetailScreen> {
     _refresh();
   }
 
-  Future<T> _withClient<T>(Future<T> Function(BoincRpcClient client) action) async {
+  Future<T> _withClient<T>(
+      Future<T> Function(BoincRpcClient client) action) async {
     final client = BoincRpcClient(widget.host);
     try {
       await client.connect();
@@ -34,7 +35,10 @@ class _HostDetailScreenState extends State<HostDetailScreen> {
   }
 
   Future<void> _refresh() async {
-    setState(() { _loading = true; _error = null; });
+    setState(() {
+      _loading = true;
+      _error = null;
+    });
     try {
       final tasks = await _withClient((client) => client.getTasks());
       if (!mounted) return;
@@ -52,11 +56,17 @@ class _HostDetailScreenState extends State<HostDetailScreen> {
     try {
       await _withClient((client) => client.setRunMode(suspended: value));
       if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(value ? 'BOINC wurde pausiert.' : 'BOINC läuft wieder automatisch.')));
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          content: Text(value
+              ? 'BOINC wurde pausiert.'
+              : 'BOINC läuft wieder automatisch.')));
       await _refresh();
     } catch (error) {
       if (!mounted) return;
-      setState(() { _error = error.toString(); _loading = false; });
+      setState(() {
+        _error = error.toString();
+        _loading = false;
+      });
     }
   }
 
@@ -65,7 +75,12 @@ class _HostDetailScreenState extends State<HostDetailScreen> {
     return Scaffold(
       appBar: AppBar(
         title: Text(widget.host.name),
-        actions: [IconButton(onPressed: _loading ? null : _refresh, icon: const Icon(Icons.refresh), tooltip: 'Aktualisieren')],
+        actions: [
+          IconButton(
+              onPressed: _loading ? null : _refresh,
+              icon: const Icon(Icons.refresh),
+              tooltip: 'Aktualisieren')
+        ],
       ),
       body: Column(
         children: [
@@ -73,9 +88,17 @@ class _HostDetailScreenState extends State<HostDetailScreen> {
             padding: const EdgeInsets.fromLTRB(16, 12, 16, 8),
             child: Row(
               children: [
-                Expanded(child: OutlinedButton.icon(onPressed: _loading ? null : () => _setSuspended(true), icon: const Icon(Icons.pause), label: const Text('Pausieren'))),
+                Expanded(
+                    child: OutlinedButton.icon(
+                        onPressed: _loading ? null : () => _setSuspended(true),
+                        icon: const Icon(Icons.pause),
+                        label: const Text('Pausieren'))),
                 const SizedBox(width: 10),
-                Expanded(child: FilledButton.icon(onPressed: _loading ? null : () => _setSuspended(false), icon: const Icon(Icons.play_arrow), label: const Text('Fortsetzen'))),
+                Expanded(
+                    child: FilledButton.icon(
+                        onPressed: _loading ? null : () => _setSuspended(false),
+                        icon: const Icon(Icons.play_arrow),
+                        label: const Text('Fortsetzen'))),
               ],
             ),
           ),
@@ -91,13 +114,16 @@ class _HostDetailScreenState extends State<HostDetailScreen> {
                     const SizedBox(height: 10),
                     Text(_error!, textAlign: TextAlign.center),
                     const SizedBox(height: 10),
-                    FilledButton.tonal(onPressed: _refresh, child: const Text('Erneut versuchen')),
+                    FilledButton.tonal(
+                        onPressed: _refresh,
+                        child: const Text('Erneut versuchen')),
                   ]),
                 ),
               ),
             ),
           if (!_loading && _error == null && _tasks.isEmpty)
-            const Expanded(child: Center(child: Text('Keine BOINC-Aufgaben vorhanden.'))),
+            const Expanded(
+                child: Center(child: Text('Keine BOINC-Aufgaben vorhanden.'))),
           if (_error == null)
             Expanded(
               child: RefreshIndicator(
@@ -108,23 +134,38 @@ class _HostDetailScreenState extends State<HostDetailScreen> {
                   separatorBuilder: (_, __) => const SizedBox(height: 10),
                   itemBuilder: (context, index) {
                     final task = _tasks[index];
-                    final percent = (task.progress * 100).clamp(0, 100).toStringAsFixed(1);
+                    final percent =
+                        (task.progress * 100).clamp(0, 100).toStringAsFixed(1);
                     return Card(
                       child: Padding(
                         padding: const EdgeInsets.all(16),
-                        child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                          Row(children: [
-                            Icon(task.suspended ? Icons.pause_circle : task.active ? Icons.play_circle : Icons.schedule),
-                            const SizedBox(width: 10),
-                            Expanded(child: Text(task.project, style: Theme.of(context).textTheme.titleMedium)),
-                            Text('$percent %'),
-                          ]),
-                          const SizedBox(height: 8),
-                          Text(task.name, maxLines: 2, overflow: TextOverflow.ellipsis),
-                          if (task.appName.isNotEmpty) Text(task.appName, style: Theme.of(context).textTheme.bodySmall),
-                          const SizedBox(height: 12),
-                          LinearProgressIndicator(value: task.progress),
-                        ]),
+                        child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Row(children: [
+                                Icon(task.suspended
+                                    ? Icons.pause_circle
+                                    : task.active
+                                        ? Icons.play_circle
+                                        : Icons.schedule),
+                                const SizedBox(width: 10),
+                                Expanded(
+                                    child: Text(task.project,
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .titleMedium)),
+                                Text('$percent %'),
+                              ]),
+                              const SizedBox(height: 8),
+                              Text(task.name,
+                                  maxLines: 2, overflow: TextOverflow.ellipsis),
+                              if (task.appName.isNotEmpty)
+                                Text(task.appName,
+                                    style:
+                                        Theme.of(context).textTheme.bodySmall),
+                              const SizedBox(height: 12),
+                              LinearProgressIndicator(value: task.progress),
+                            ]),
                       ),
                     );
                   },

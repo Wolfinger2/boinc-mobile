@@ -19,13 +19,16 @@ class BoincMobileApp extends StatelessWidget {
       theme: ThemeData(
         useMaterial3: true,
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.indigo),
-        inputDecorationTheme: const InputDecorationTheme(border: OutlineInputBorder()),
+        inputDecorationTheme:
+            const InputDecorationTheme(border: OutlineInputBorder()),
       ),
       darkTheme: ThemeData(
         useMaterial3: true,
         brightness: Brightness.dark,
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.indigo, brightness: Brightness.dark),
-        inputDecorationTheme: const InputDecorationTheme(border: OutlineInputBorder()),
+        colorScheme: ColorScheme.fromSeed(
+            seedColor: Colors.indigo, brightness: Brightness.dark),
+        inputDecorationTheme:
+            const InputDecorationTheme(border: OutlineInputBorder()),
       ),
       home: const HomeScreen(),
     );
